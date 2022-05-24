@@ -96,20 +96,46 @@ def main():
         exit(1)
 
     print(f"[*] Used syscalls: {syscalls}")
+
     print("[*] Calling SysWhispers2 to generate stubs for these system calls")
     call_syswhispers2(syscalls)
+
+    # x64...
     h_fn = os.path.join('SysWhispers2', 'syswhispers2bof.h')
     print(f"[*] Fixing up H file {h_fn}")
     out_file = fixup_h(h_fn)
+
     c_fn = os.path.join('SysWhispers2', 'syswhispers2bof.c')
     print(f"[*] Fixing up C file {c_fn}")
     out_file += fixup_c(c_fn)
-    stub_fn = os.path.join('SysWhispers2', 'syswhispers2bofstubs.asm')
+
+    stub_fn = os.path.join('SysWhispers2', 'syswhispers2bofstubs.x64.asm')
     print(f"[*] Converting ASM stubs from {stub_fn}")
+
     out_file += build_stubs(stub_fn)
-    print(f"[*] Writing combined output to syscalls.h")
-    open("syscalls.h",'w').write(out_file)
+
+    print(f"[*] Writing combined output to syscalls.x64.h")
+    open("syscalls.x64.h",'w').write(out_file)
+
+    # x86...
+    h_fn = os.path.join('SysWhispers2', 'syswhispers2bof.h')
+    print(f"[*] Fixing up H file {h_fn}")
+    out_file = fixup_h(h_fn)
+
+    c_fn = os.path.join('SysWhispers2', 'syswhispers2bof.c')
+    print(f"[*] Fixing up C file {c_fn}")
+    out_file += fixup_c(c_fn)
+
+    stub_fn = os.path.join('SysWhispers2', 'syswhispers2bofstubs.x86.asm')
+    print(f"[*] Converting ASM stubs from {stub_fn}")
+
+    out_file += build_stubs(stub_fn)
+
+    print(f"[*] Writing combined output to syscalls.x86.h")
+    open("syscalls.x86.h",'w').write(out_file)
+
     print(f"[*] Note: asm.h is no longer needed")
+
 
 if __name__ == '__main__':
     main()
